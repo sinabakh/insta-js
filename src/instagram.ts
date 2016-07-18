@@ -35,8 +35,12 @@ class Instagram{
             let token_start = url.search('#access_token') + '#access_token'.length + 1;
             let token = url.substr(token_start);
 
-            this.token = token;
+            this.set_token(token);
             return token;
+        }
+
+        set_token( token : string) : void {
+            this.token = token;
         }
 
     // ────────────────────────────────────────────────────────────────────────────────
