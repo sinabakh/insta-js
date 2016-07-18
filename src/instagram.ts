@@ -20,9 +20,11 @@ class Instagram{
         this.redirect_uri = redirect_uri;
     }
     
+
     //
     // ─── AUTHENTICATION METHODS ─────────────────────────────────────────────────────
     //
+
 
         get_auth_url() : string {
             return 'https://api.instagram.com/oauth/authorize/?client_id=' + this.client_id
@@ -37,13 +39,18 @@ class Instagram{
             return token;
         }
 
+    // ────────────────────────────────────────────────────────────────────────────────
+
+    
     //
     // ─── API RELATED METHODS ────────────────────────────────────────────────────────
     //
    
+
         static API = class {
 
         }
+
     // ────────────────────────────────────────────────────────────────────────────────
 
     
