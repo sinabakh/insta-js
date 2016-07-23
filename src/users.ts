@@ -22,6 +22,7 @@ module Instagram.Users {
             console.log("Ok ME:");
             let data = res.data;
             console.log(data.profile_picture);
+            return data;
         });
     }
 

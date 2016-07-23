@@ -125,6 +125,7 @@ var Instagram;
                 console.log("Ok ME:");
                 var data = res.data;
                 console.log(data.profile_picture);
+                return data;
             });
         }
         Users.self = self;
