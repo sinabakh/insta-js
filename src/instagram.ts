@@ -41,7 +41,7 @@ module Instagram{
             let token_start = url.search('#access_token') + '#access_token'.length + 1;
             let token = url.substr(token_start);
 
-            this.set_token(token);
+            set_token(token);
             return token;
         }
 
