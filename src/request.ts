@@ -21,8 +21,9 @@ module Request {
         this.fail_function = fail_function;
     }
 
-    function make_request( url : string, callback:Function ) : void {
+    function make_request( url : string, callback:Function ) : any {
         console.log("Requesting....");
+        console.log(url);
         
         let xhttp =  new XMLHttpRequest();
         //xhttp.withCredentials = true;
@@ -33,11 +34,11 @@ module Request {
                 if(xhttp.status == 200)
                 {
                     console.log("Response OK!");
-                    console.log(xhttp.response);
-                    callback("ok!");
+                    callback(undefined, xhttp.response);
                 }
                 else {
-                    console.log("Not OK!");
+                    console.log("Response Not OK!");
+                    callback(xhttp.response, undefined);
                     
                 }
             }
@@ -46,7 +47,27 @@ module Request {
     }
 
     export function request( url : string , callback : Function ) {
-        this.make_request( this.base_url + url + '?access_token=' + this.token , callback );
+        make_request( this.base_url + url + '?access_token=' + this.token , function(err, response) {
+            if(err)
+                callback(undefined);
+            else {
+                response = JSON.parse(response);
+                if(response.meta.code == 200)
+                {
+                    let res = {
+                        data: response.data,
+                        next: response.pagination 
+                    };
+                    callback(res);
+                } 
+                else
+                {
+                    //FIXME
+                    callback(undefined);
+                }
+                
+            }
+        });
     }
 
 }
