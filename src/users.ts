@@ -9,23 +9,11 @@
 // ────────────────────────────────────────────────────────────────────────────────────────────────────────── 
 //
 
-/// <reference path="./request.ts"/>
+/// <reference path="./instagram.ts"/>
 
-class Users {
-    
-    req : Request;
+module Instagram.Users {    
 
-    constructor( req : Request ) {
-        this.req = req;
-    }
-
-    self() {
-        console.log("ME :");
-        this.req.request('users/self/', function(){
-            console.log("I've been called!");
-            
-        });
-        console.log(this.req.base_url);
+    export function self() {
         
     }
 

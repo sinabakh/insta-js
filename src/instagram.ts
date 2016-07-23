@@ -9,28 +9,21 @@
 // ────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────── 
 //
 
-/// <reference path="./users.ts"/>
 /// <reference path="./request.ts"/>
 
-class Instagram{
+module Instagram{
 
-    client_id : string = undefined;
-    redirect_uri : string = undefined;
-    token : string = undefined;
+    export let client_id : string = undefined;
+    export let redirect_uri : string = undefined;
+    export let token : string = undefined;
 
-    base_url : string = 'https://api.instagram.com/v1/';
-    req : Request = undefined;
+    export let base_url : string = 'https://api.instagram.com/v1/';
 
-    API : any;
+    export let request;
 
-    constructor( client_id : string , redirect_uri : string ) {
+    export function init( client_id : string , redirect_uri : string ) {
         this.client_id = client_id;
         this.redirect_uri = redirect_uri;
-        this.req = new Request( this.base_url , function(){
-            console.log("That Fail Function");
-        });
-        
-        this.API = new this.API_CI(this.req);
     }
     
 
@@ -39,12 +32,12 @@ class Instagram{
     //
 
 
-        get_auth_url() : string {
+        export function get_auth_url() : string {
             return 'https://api.instagram.com/oauth/authorize/?client_id=' + this.client_id
                 + '&redirect_uri=' + this.redirect_uri + '&response_type=token';
         }
 
-        get_redirect_uri_token( url : string ) : string {
+        export function get_redirect_uri_token( url : string ) : string {
             let token_start = url.search('#access_token') + '#access_token'.length + 1;
             let token = url.substr(token_start);
 
@@ -52,32 +45,10 @@ class Instagram{
             return token;
         }
 
-        set_token( token : string) : void {
+        export function set_token( token : string) : void {
             this.token = token;
+            this.request = Request.init( this.base_url, this.token, function(){} );
         }
 
-    // ────────────────────────────────────────────────────────────────────────────────
-
-    
-    //
-    // ─── API RELATED METHODS ────────────────────────────────────────────────────────
-    //
-   
-
-         API_CI = class {
-
-            req : Request;
-
-            users : Users;
-
-            constructor( req : Request ) {
-                this.req = req;
-                this.users = new Users(this.req);
-            }
-
-        }
-
-    // ────────────────────────────────────────────────────────────────────────────────
-
-    
+    // ────────────────────────────────────────────────────────────────────────────────    
 }
