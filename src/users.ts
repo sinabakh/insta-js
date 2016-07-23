@@ -10,11 +10,19 @@
 //
 
 /// <reference path="./instagram.ts"/>
+/// <reference path="./request.ts"/>
 
 module Instagram.Users {    
 
     export function self() {
+        console.log("ME: ");
         
+        let url = 'users/self/';
+        Request.request(url, function(res){
+            console.log("Ok ME:");
+            let data = res.data;
+            console.log(data.profile_picture);
+        });
     }
 
 }
