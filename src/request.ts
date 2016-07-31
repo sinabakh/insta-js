@@ -34,11 +34,11 @@ module Request {
                 if(xhttp.status == 200)
                 {
                     console.log("Response OK!");
-                    callback(undefined, xhttp.response);
+                    callback(xhttp.response);
                 }
                 else {
                     console.log("Response Not OK!");
-                    callback(xhttp.response, undefined);
+                    callback(xhttp.response);
                     
                 }
             }
@@ -47,10 +47,7 @@ module Request {
     }
 
     export function request( url : string , callback : Function ) {
-        make_request( this.base_url + url + '?access_token=' + this.token , function(err, response) {
-            if(err)
-                callback(undefined);
-            else {
+        make_request( this.base_url + url + '?access_token=' + this.token , function(response) {
                 response = JSON.parse(response);
                 if(response.meta.code == 200)
                 {
@@ -63,10 +60,11 @@ module Request {
                 else
                 {
                     //FIXME
-                    callback(undefined);
+                    console.log("ERROR:");
+                    console.log(response.meta.error_message);
+                    
+                    //callback(undefined);
                 }
-                
-            }
         });
     }
 
