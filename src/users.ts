@@ -16,7 +16,7 @@ module Instagram.Users {
 
     export function self(callback:Function) {
         let url = 'users/self/';
-        Request.request(url, function(res){
+        Request.request(url, null, function(res){
             let data = res.data;
             callback(data);
         });
@@ -24,9 +24,28 @@ module Instagram.Users {
 
     export function get_user_by_uid(uid:number, callback:Function) {
         let url = 'users/' + uid + '/';
-        Request.request(url, function(res){
+        Request.request(url, null, function(res){
             let data = res.data;
             callback(data);
+        });
+    }
+
+    export function get_self_recent_media(page:number, callback:Function) {
+        let url = 'users/self/media/recent/';
+        let params = {
+            count: 10
+        };
+
+        Request.request(url, params, function(res){
+            let data = res.data;
+            if(page == 1)
+                callback(data);
+            else {
+                Request.get_next_till(page, res.next, function(res){                    
+                    let data = res.data;
+                    callback(data);
+                });    
+            }
         });
     }
 

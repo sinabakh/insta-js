@@ -39,8 +39,44 @@ var Request;
         };
         xhttp.send(null);
     }
-    function request(url, callback) {
-        make_request(this.base_url + url + '?access_token=' + this.token, function (response) {
+    function get_next(pagination, callback) {
+        if (pagination.next_url) {
+            make_request(pagination.next_url, function (response) {
+                response = JSON.parse(response);
+                if (response.meta.code == 200) {
+                    var res = {
+                        data: response.data,
+                        next: response.pagination
+                    };
+                    callback(res);
+                }
+                else {
+                    //FIXME
+                    console.log("ERROR:");
+                    console.log(response.meta.error_message);
+                }
+            });
+        }
+        else {
+            callback({});
+        }
+    }
+    function get_next_till(times, pagination, callback) {
+        times--;
+        get_next(pagination, function (res) {
+            if (times == 1)
+                callback(res);
+            else
+                get_next_till(times, pagination, callback);
+        });
+    }
+    Request.get_next_till = get_next_till;
+    function request(url, params, callback) {
+        var final_url = this.base_url + url + '?access_token=' + this.token;
+        for (var key in params) {
+            final_url += "&" + key + "=" + params[key];
+        }
+        make_request(final_url, function (response) {
             response = JSON.parse(response);
             if (response.meta.code == 200) {
                 var res = {
@@ -117,21 +153,37 @@ var Instagram;
     (function (Users) {
         function self(callback) {
             var url = 'users/self/';
-            Request.request(url, function (res) {
+            Request.request(url, null, function (res) {
                 var data = res.data;
                 callback(data);
             });
         }
         Users.self = self;
-        function get_user_by_uid(uid) {
+        function get_user_by_uid(uid, callback) {
             var url = 'users/' + uid + '/';
-            Request.request(url, function (res) {
+            Request.request(url, null, function (res) {
                 var data = res.data;
-                console.log("HE: ");
-                console.log(data);
-                return data;
+                callback(data);
             });
         }
         Users.get_user_by_uid = get_user_by_uid;
+        function get_self_recent_media(page, callback) {
+            var url = 'users/self/media/recent/';
+            var params = {
+                count: 1
+            };
+            Request.request(url, params, function (res) {
+                var data = res.data;
+                if (page == 1)
+                    callback(data);
+                else {
+                    Request.get_next_till(page, res.next, function (res) {
+                        var data = res.data;
+                        callback(data);
+                    });
+                }
+            });
+        }
+        Users.get_self_recent_media = get_self_recent_media;
     })(Users = Instagram.Users || (Instagram.Users = {}));
 })(Instagram || (Instagram = {}));
