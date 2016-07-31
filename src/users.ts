@@ -14,15 +14,19 @@
 
 module Instagram.Users {    
 
-    export function self() {
-        console.log("ME: ");
-        
+    export function self(callback:Function) {
         let url = 'users/self/';
         Request.request(url, function(res){
-            console.log("Ok ME:");
             let data = res.data;
-            console.log(data.profile_picture);
-            return data;
+            callback(data);
+        });
+    }
+
+    export function get_user_by_uid(uid:number, callback:Function) {
+        let url = 'users/' + uid + '/';
+        Request.request(url, function(res){
+            let data = res.data;
+            callback(data);
         });
     }
 

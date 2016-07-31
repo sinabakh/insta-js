@@ -29,33 +29,30 @@ var Request;
             if (xhttp.readyState == 4) {
                 if (xhttp.status == 200) {
                     console.log("Response OK!");
-                    callback(undefined, xhttp.response);
+                    callback(xhttp.response);
                 }
                 else {
                     console.log("Response Not OK!");
-                    callback(xhttp.response, undefined);
+                    callback(xhttp.response);
                 }
             }
         };
         xhttp.send(null);
     }
     function request(url, callback) {
-        make_request(this.base_url + url + '?access_token=' + this.token, function (err, response) {
-            if (err)
-                callback(undefined);
+        make_request(this.base_url + url + '?access_token=' + this.token, function (response) {
+            response = JSON.parse(response);
+            if (response.meta.code == 200) {
+                var res = {
+                    data: response.data,
+                    next: response.pagination
+                };
+                callback(res);
+            }
             else {
-                response = JSON.parse(response);
-                if (response.meta.code == 200) {
-                    var res = {
-                        data: response.data,
-                        next: response.pagination
-                    };
-                    callback(res);
-                }
-                else {
-                    //FIXME
-                    callback(undefined);
-                }
+                //FIXME
+                console.log("ERROR:");
+                console.log(response.meta.error_message);
             }
         });
     }
@@ -118,16 +115,23 @@ var Instagram;
 (function (Instagram) {
     var Users;
     (function (Users) {
-        function self() {
-            console.log("ME: ");
+        function self(callback) {
             var url = 'users/self/';
             Request.request(url, function (res) {
-                console.log("Ok ME:");
                 var data = res.data;
-                console.log(data.profile_picture);
-                return data;
+                callback(data);
             });
         }
         Users.self = self;
+        function get_user_by_uid(uid) {
+            var url = 'users/' + uid + '/';
+            Request.request(url, function (res) {
+                var data = res.data;
+                console.log("HE: ");
+                console.log(data);
+                return data;
+            });
+        }
+        Users.get_user_by_uid = get_user_by_uid;
     })(Users = Instagram.Users || (Instagram.Users = {}));
 })(Instagram || (Instagram = {}));
